@@ -39,7 +39,7 @@ router.post('/favorites', async (req,res,next) => {
  * This path returns the favorites recipes that were saved by the logged-in user
  */
 router.get('/favorites', async (req,res,next) => {
-  try{
+  try {
     const user_id = req.session.user_id;
     let favorite_recipes = {};
     const recipes_id = await user_utils.getFavoriteRecipes(user_id);
@@ -52,7 +52,18 @@ router.get('/favorites', async (req,res,next) => {
   }
 });
 
-
+/**
+ * route for My Recipe Page
+ */
+router.get('/myRecipes', async (req, res, next) => {
+  try {
+    const user_id = req.session.user_id;
+    let all_my_recipes = await recipe_utils.getMyRecipes(user_id);
+    res.status(200).send(all_my_recipes);
+  }catch(error){
+    next(error); 
+  }
+});
 
 
 module.exports = router;

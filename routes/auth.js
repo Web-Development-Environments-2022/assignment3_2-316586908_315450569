@@ -4,6 +4,9 @@ const MySql = require("../routes/utils/MySql");
 const DButils = require("../routes/utils/DButils");
 const bcrypt = require("bcrypt");
 
+/**
+ * seif 4
+ */
 router.post("/Register", async (req, res, next) => {
   try {
     // parameters exists
@@ -39,7 +42,9 @@ router.post("/Register", async (req, res, next) => {
     next(error);
   }
 });
-
+/**
+ * seif 5
+ */
 router.post("/Login", async (req, res, next) => {
   try {
     // check that username exists
