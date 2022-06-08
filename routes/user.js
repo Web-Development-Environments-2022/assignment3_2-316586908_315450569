@@ -57,11 +57,12 @@ router.get('/favorites', async (req,res,next) => {
  */
 router.get('/myRecipes', async (req, res, next) => {
   try {
-    const user_id = req.session.user_id;
+    // const user_id = req.session.user_id;
+    const user_id = 'ido';
     let all_my_recipes = await recipe_utils.getMyRecipes(user_id);
     res.status(200).send(all_my_recipes);
   }catch(error){
-    next(error); 
+    next(error);
   }
 });
 

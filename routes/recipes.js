@@ -2,7 +2,22 @@ var express = require("express");
 var router = express.Router();
 const recipes_utils = require("./utils/recipes_utils");
 const user_utils = require("./utils/user_utils");
+
 router.get("/", (req, res) => res.send("im here"));
+
+/**
+ * This path returns 3 random recipes
+ * seif 6
+ */
+ router.get("/random", async (req, res, next) => {
+  try{
+    let random_3_recipes = await recipes_utils.getRandomThreeRecipes();
+    res.send(random_3_recipes);
+  }
+  catch (error){
+    next(error);
+  }
+});
 
 
 /**
@@ -18,25 +33,13 @@ router.get("/:recipeId", async (req, res, next) => {
   }
 });
 
-/**
- * This path returns 3 random recipes
- * seif 6
- */
-router.get("/random", async (req, res, next) => {
-  try{
-    let random_3_recipes = await recipes_utils.getRandomThreeRecipes();
-    res.send(random_3_recipes);
-  }
-  catch (error){
-    next(error);
-  }
-});
+
 
 /**
  * list of preview recipes, for example : search recipe page
  * seif 8
  */
- router.get("/:query", async (req, res, next) => {
+ router.get("/query/:query", async (req, res, next) => {
   try {
     const recipesToReturn = await recipes_utils.searchRecipes(req.query, req.params.query);
     res.send(recipesToReturn);
@@ -66,6 +69,7 @@ router.get("/reviewRecipe/:id", async (req, res, next) => {
 router.post("/createRecipe/:name", async (req, res, next) => {
   try {
     await recipes_utils.createRecipe(req.session.user_id, req.params.name, req.query);
+    // await recipes_utils.createRecipe('ido', req.params.name, req.query);
     res.status(200).send({ success: true, message: "Recipe Created" });
   }catch (error){
     next(error);

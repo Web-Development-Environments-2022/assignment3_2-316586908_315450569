@@ -1,12 +1,14 @@
 const axios = require("axios");
 const api_domain = "https://api.spoonacular.com/recipes";
+const DButils = require("./DButils");
 
 
 
-/**
- * Get recipes list from spooncular response and extract the relevant recipe data for preview
- * @param {*} recipes_info 
- */
+
+// /**
+//  * Get recipes list from spooncular response and extract the relevant recipe data for preview
+//  * @param {*} recipes_info 
+//  */
 
 
 async function getRecipeInformation(recipe_id) {
@@ -21,10 +23,11 @@ async function getRecipeInformation(recipe_id) {
 async function getRecipesPreview(recipes_ids_list){
     let promises = [];
     recipes_ids_list.map((id) => {
-        promises.push(getRecipeInformation(id));
+        promises.push(getRecipeInformation(id.id));
     });
     let info_res = await Promise.all(promises);
     return extractPreviewRecipeDetails(info_res);
+    // return extractPreviewRecipeDetails(promises);
 }
 
 
@@ -121,13 +124,13 @@ async function searchRecipes(query_params, query){
         }
     });
 
-    let extract_ids = response.results.map((recipe_info) => {
+    let extract_ids = response.data.results.map((recipe_info) => {
         
         let data = recipe_info;
         if (recipe_info.results){
             data = recipe_info.results;
         }
-        const id = data;
+        const id = data.id;
         
         return {
             id: id
@@ -177,8 +180,7 @@ async function createRecipe(user_id, recipe_name, query_params){
         // ingredients, 
         servings } = query_params;
 
-    await DButils.execQuery(`insert into Recipes values ('${user_id}',${recipe_name}, ${readyInMinutes}, 
-        ${image}, ${aggregateLikes}, ${vegan}, ${vegetarian}, ${glutenFree}, ${instructions}, ${servings})`);
+    await DButils.execQuery(`insert into recipes values ('${user_id}','${recipe_name}', ${readyInMinutes}, ${image}, ${aggregateLikes}, '${vegan}', '${vegetarian}', '${glutenFree}', '${instructions}', '${servings}')`);
 }
 
 /**
@@ -186,7 +188,7 @@ async function createRecipe(user_id, recipe_name, query_params){
  * @param {*} user_id 
  */
 async function getMyRecipes(user_id){
-    let all_my_recipes = await DButils.execQuery(`select * from recipes where userId = ${user_id}`);
+    let all_my_recipes = await DButils.execQuery(`select * from recipes where userId = '${user_id}'`);
     let extract_details = all_my_recipes.map((recipe) => {
         let { recipeName, readyInMinutes, image, popularity, vegan, vegetarian, glutenFree } = recipe;
         return {
