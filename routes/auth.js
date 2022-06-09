@@ -22,6 +22,8 @@ router.post("/Register", async (req, res, next) => {
       // profilePic: req.body.profilePic
     }
     let users = [];
+    let size_table = await DButils.execQuery("SELECT count(*) as count FROM users");
+    let tmp = size_table[0].count;
     users = await DButils.execQuery("SELECT username from users");
     
     if (users.find((x) => x.username === user_details.username))
@@ -34,7 +36,7 @@ router.post("/Register", async (req, res, next) => {
     );
     // let hash_password = user_details.password;
     await DButils.execQuery(
-      `INSERT INTO users VALUES ('${user_details.username}', '${user_details.firstname}', '${user_details.lastname}',
+      `INSERT INTO users VALUES ('${size_table[0].count}','${user_details.username}', '${user_details.firstname}', '${user_details.lastname}',
       '${user_details.country}', '${hash_password}', '${user_details.email}')`
     );
     res.status(201).send({ message: "user created", success: true });

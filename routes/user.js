@@ -7,18 +7,18 @@ const recipe_utils = require("./utils/recipes_utils");
 /**
  * Authenticate all incoming requests by middleware
  */
-router.use(async function (req, res, next) {
-  if (req.session && req.session.user_id) {
-    DButils.execQuery("SELECT user_id FROM users").then((users) => {
-      if (users.find((x) => x.user_id === req.session.user_id)) {
-        req.user_id = req.session.user_id;
-        next();
-      }
-    }).catch(err => next(err));
-  } else {
-    res.sendStatus(401);
-  }
-});
+// router.use(async function (req, res, next) {
+//   if (req.session && req.session.user_id) {
+//     DButils.execQuery("SELECT userId FROM users").then((users) => {
+//       if (users.find((x) => x.user_id === req.session.user_id)) {
+//         req.user_id = req.session.user_id;
+//         next();
+//       }
+//     }).catch(err => next(err));
+//   } else {
+//     res.sendStatus(401);
+//   }
+// });
 
 
 /**
@@ -66,5 +66,18 @@ router.get('/myRecipes', async (req, res, next) => {
   }
 });
 
+/**
+ * route for specific recipe from My Recipe Page
+ */
+ router.get('/myRecipes/:recipeName', async (req, res, next) => {
+  try {
+    // const user_id = req.session.user_id;
+    const user_id = '0';
+    let all_my_recipes = await recipe_utils.getMySpecificRecipe(user_id,req.params.recipeName);
+    res.status(200).send(all_my_recipes);
+  }catch(error){
+    next(error);
+  }
+});
 
 module.exports = router;

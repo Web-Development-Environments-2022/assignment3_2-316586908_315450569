@@ -5,7 +5,7 @@ async function markAsFavorite(user_id, recipe_id){
 }
 
 async function getFavoriteRecipes(user_id){
-    const recipes_id = await DButils.execQuery(`select recipeId from favoriterecipes where user_id='${user_id}'`);
+    const recipes_id = await DButils.execQuery(`select recipeId from favoriterecipes where userId='${user_id}'`);
     return recipes_id;
 }
 
