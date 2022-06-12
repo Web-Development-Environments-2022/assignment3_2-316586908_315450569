@@ -54,7 +54,6 @@ router.get("/reviewRecipe/:id", async (req, res, next) => {
 router.post("/createRecipe/:name", async (req, res, next) => {
   try {
     await recipes_utils.createRecipe(req.session.user_id, req.params.name, req.query);
-    // await recipes_utils.createRecipe('0', req.params.name, req.query);
     res.status(200).send({ success: true, message: "Recipe Created" });
   }catch (error){
     next(error);

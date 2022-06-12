@@ -139,7 +139,6 @@ async function getRecipeReview(user_id, recipe_id){
  * @param {*} user_id logged in user
  * @param {*} recipe_name recipe name 
  * @param {*} query_params all the details of the recipe
- * TODO: add Ingredients
  */
 async function createRecipe(user_id, recipe_name, query_params){
     let { 
