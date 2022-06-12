@@ -11,7 +11,7 @@ router.get("/", (req, res) => res.send("im here"));
  */
  router.get("/random", async (req, res, next) => {
   try{
-    let random_3_recipes = await recipes_utils.getRandomThreeRecipes();
+    let random_3_recipes = await recipes_utils.getRandomThreeRecipes(req.session.user_id);
     res.send(random_3_recipes);
   }
   catch (error){
@@ -19,29 +19,13 @@ router.get("/", (req, res) => res.send("im here"));
   }
 });
 
-
-/**
- * This path returns a preview details of a recipe by its id
- * seif 1
- */
-router.get("/:recipeId", async (req, res, next) => {
-  try {
-    const recipe = await recipes_utils.getRecipeDetails(req.params.recipeId);
-    res.send(recipe);
-  } catch (error) {
-    next(error);
-  }
-});
-
-
-
 /**
  * list of preview recipes, for example : search recipe page
  * seif 8
  */
  router.get("/query/:query", async (req, res, next) => {
   try {
-    const recipesToReturn = await recipes_utils.searchRecipes(req.query, req.params.query);
+    const recipesToReturn = await recipes_utils.searchRecipes(req.session.user_id, req.query, req.params.query);
     res.send(recipesToReturn);
   } catch (error) {
     next(error);
@@ -57,7 +41,7 @@ router.get("/reviewRecipe/:id", async (req, res, next) => {
     // mark as seen
     await user_utils.markAsSeen(req.session.user_id, req.params.id);
     // recieve all info
-    const all_info = await recipes_utils.getRecipeReview(req.params.id);
+    const all_info = await recipes_utils.getRecipeReview(req.session.user_id, req.params.id);
     res.send(all_info);
   } catch (error){
     next(error);
@@ -69,8 +53,8 @@ router.get("/reviewRecipe/:id", async (req, res, next) => {
  */
 router.post("/createRecipe/:name", async (req, res, next) => {
   try {
-    // await recipes_utils.createRecipe(req.session.user_id, req.params.name, req.query);
-    await recipes_utils.createRecipe('0', req.params.name, req.query);
+    await recipes_utils.createRecipe(req.session.user_id, req.params.name, req.query);
+    // await recipes_utils.createRecipe('0', req.params.name, req.query);
     res.status(200).send({ success: true, message: "Recipe Created" });
   }catch (error){
     next(error);
