@@ -12,7 +12,11 @@ router.get("/", (req, res) => res.send("im here"));
  router.get("/random", async (req, res, next) => {
   try{
     let random_3_recipes = await recipes_utils.getRandomThreeRecipes(req.session.user_id);
-    res.send(random_3_recipes);
+    let results = {
+      recipes: random_3_recipes
+    }
+    // res.send(random_3_recipes);
+    res.send(results);
   }
   catch (error){
     next(error);
