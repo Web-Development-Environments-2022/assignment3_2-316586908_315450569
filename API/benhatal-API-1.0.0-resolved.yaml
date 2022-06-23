@@ -71,7 +71,7 @@ paths:
       description: get three random recipes from external API - spoonacular
       responses:
         "200":
-          description: JSON object with details of three random recipes
+          description: JSON object with property 'recipes' that contains details of three random recipes
           content:
             application/json:
               schema:
