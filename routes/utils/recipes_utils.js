@@ -217,8 +217,8 @@ async function getMyLastRecipes(user_id){
         promises.push(getPreviews(user_id, [recipeId.recipeId]));
     });
     let info_res = await Promise.all(promises);
-
-    return info_res;
+    let tmp_arr = info_res.map((arr) => {return arr[0]})
+    return tmp_arr;
 }
 
 exports.getRandomThreeRecipes = getRandomThreeRecipes;

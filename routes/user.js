@@ -7,18 +7,18 @@ const recipe_utils = require("./utils/recipes_utils");
 /**
  * Authenticate all incoming requests by middleware
  */
-router.use(async function (req, res, next) {
-  if (req.session && req.session.user_id) {
-    DButils.execQuery("SELECT userId FROM users").then((users) => {
-      if (users.find((x) => x.userId === req.session.user_id)) {
-        req.user_id = req.session.user_id;
-        next();
-      }
-    }).catch(err => next(err));
-  } else {
-    res.sendStatus(401);
-  }
-});
+// router.use(async function (req, res, next) {
+//   if (req.session && req.session.user_id) {
+//     DButils.execQuery("SELECT userId FROM users").then((users) => {
+//       if (users.find((x) => x.userId === req.session.user_id)) {
+//         req.user_id = req.session.user_id;
+//         next();
+//       }
+//     }).catch(err => next(err));
+//   } else {
+//     res.sendStatus(401);
+//   }
+// });
 
 
 /**
@@ -96,7 +96,10 @@ router.get('/lastseen', async (req, res, next) => {
     const user_id = req.session.user_id;
 
     let last_3_recipes = await recipe_utils.getMyLastRecipes(user_id);
-    res.status(200).send(last_3_recipes);
+    let results = {
+      recipes: last_3_recipes
+    }
+    res.status(200).send(results);
   }catch(error){
     next(error);
   }

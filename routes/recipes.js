@@ -11,11 +11,52 @@ router.get("/", (req, res) => res.send("im here"));
  */
  router.get("/random", async (req, res, next) => {
   try{
-    let random_3_recipes = await recipes_utils.getRandomThreeRecipes(req.session.user_id);
+    // let random_3_recipes = await recipes_utils.getRandomThreeRecipes(req.session.user_id);
+    let tmp_arr = [
+      {
+            id: "156124",
+            title: "pizza",
+            readyInMinutes: "45",
+            image: "https://spoonacular.com/recipeImages/641799-556x370.jpg",
+            popularity: "50",
+            vegan: true,
+            vegetarian: true,
+            glutenFree: true,
+            seen: false,
+            favorite: false
+      },
+      {
+        id: "156122",
+        title: "pizza124",
+        readyInMinutes: "60",
+        image: "https://spoonacular.com/recipeImages/641799-556x370.jpg",
+        popularity: "50",
+        vegan: true,
+        vegetarian: true,
+        glutenFree: true,
+        seen: false,
+        favorite: false
+      },
+      {
+        id: "15612",
+            title: "pizza12",
+            readyInMinutes: "45",
+            image: "https://spoonacular.com/recipeImages/641799-556x370.jpg",
+            popularity: "50",
+            vegan: true,
+            vegetarian: true,
+            glutenFree: true,
+            seen: false,
+            favorite: false
+      }
+    ]
+    // let results = {
+    //   recipes: random_3_recipes
+    // }
+
     let results = {
-      recipes: random_3_recipes
+      recipes: tmp_arr
     }
-    // res.send(random_3_recipes);
     res.send(results);
   }
   catch (error){
