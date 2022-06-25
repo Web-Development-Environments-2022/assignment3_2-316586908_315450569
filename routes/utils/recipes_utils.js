@@ -111,11 +111,12 @@ async function searchRecipes(user_id, query_params, query){
 async function getRecipeReview(user_id, recipe_id){
     let recipe_info = await getRecipeInformation(recipe_id);
     let preview_info = await getPreviews(user_id, [recipe_id]);
-    let { id, title, readyInMinutes, image, aggregateLikes, vegan, vegetarian, glutenFree, instructions, servings, extendedIngredients } = recipe_info.data;
+    let { id, title, readyInMinutes, image, aggregateLikes, vegan, vegetarian, glutenFree, instructions, servings, extendedIngredients, analyzedInstructions } = recipe_info.data;
     extendedIngredients = extendedIngredients.map((ingredient) => {
         return {
             ingredientName: ingredient.name,
-            amout: ingredient.amount
+            amount: ingredient.amount,
+            units: ingredient.unit
         }
     });
     return {
@@ -131,7 +132,8 @@ async function getRecipeReview(user_id, recipe_id){
         favorite: preview_info[0].favorite,
         instructions: instructions,
         servings: servings,
-        ingredients: extendedIngredients
+        ingredients: extendedIngredients,
+        analyzedInstructions: analyzedInstructions
     }
 }
 /**

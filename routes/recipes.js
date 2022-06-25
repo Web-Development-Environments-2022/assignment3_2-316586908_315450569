@@ -86,7 +86,9 @@ router.get("/reviewRecipe/:id", async (req, res, next) => {
     // mark as seen
     await user_utils.markAsSeen(req.session.user_id, req.params.id);
     // recieve all info
-    const all_info = await recipes_utils.getRecipeReview(req.session.user_id, req.params.id);
+    const all_info = {
+      recipe: await recipes_utils.getRecipeReview(req.session.user_id, req.params.id)
+    }
     res.send(all_info);
   } catch (error){
     next(error);
