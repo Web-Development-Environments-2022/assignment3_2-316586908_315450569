@@ -126,7 +126,7 @@ paths:
           description: full details of the recipe returned.
         "400":
           description: error accured.
-  /recipes/createRecipe/{name}:
+  /users/createRecipe/{name}:
     post:
       tags:
       - Recipes

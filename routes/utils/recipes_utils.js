@@ -161,7 +161,7 @@ async function createRecipe(user_id, recipe_name, query_params){
     await DButils.execQuery(`insert into recipes values ('${user_id}' ,'${size_table[0].count}' ,'${recipe_name}', '${readyInMinutes}', '${image}', '${aggregateLikes}', '${vegan}', '${vegetarian}', '${glutenFree}', '${instructions}', '${servings}')`);
     // ingredients = list : [dict(name : ingredientName_1, amout: amount_1), dict(name: ingredientName_2, amout: amount_2), ...]
     ingredients.map(async (data) => {
-        await DButils.execQuery(`insert into ingredients values ('${size_table[0].count}', '${data.name}', '${data.amout}')`);
+        await DButils.execQuery(`insert into ingredients values ('${size_table[0].count}', '${data.name}', '${data.amount}', '${data.units}')`);
     });
 }
 
@@ -192,11 +192,11 @@ async function getMyRecipes(user_id){
 /**
  * function for review of a specific recipe from My Recipes Page
  */
-async function getMySpecificRecipe(user_id, recipe_name){
-    let my_recipe = await DButils.execQuery(`select * from recipes where userId = '${user_id}' AND recipeName = '${recipe_name}'`);
+async function getMySpecificRecipe(user_id, recipe_id){
+    let my_recipe = await DButils.execQuery(`select * from recipes where userId = '${user_id}' AND recipeId = '${recipe_id}'`);
     if (my_recipe.length == 0)
         return {};
-    let ingredients = await DButils.execQuery(`select ingredientName, amount from ingredients where recipeId = '${my_recipe[0].recipeId}'`);
+    let ingredients = await DButils.execQuery(`select ingredientName, amount, units from ingredients where recipeId = '${recipe_id}'`);
     let { recipeName, readyInMinutes, image, popularity, vegan, vegetarian, glutenFree, instructions, servings } = my_recipe[0];
     return {
         recipeName: recipeName,

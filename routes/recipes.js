@@ -2,6 +2,8 @@ var express = require("express");
 var router = express.Router();
 const recipes_utils = require("./utils/recipes_utils");
 const user_utils = require("./utils/user_utils");
+const DButils = require("./utils/DButils");
+
 
 router.get("/", (req, res) => res.send("im here"));
 
@@ -206,30 +208,32 @@ favorite: false
  * seif 7 + mark as seen
  */
 router.get("/reviewRecipe/:id", async (req, res, next) => {
+  const all_info = '';
   try {
-    // mark as seen
-    await user_utils.markAsSeen(req.session.user_id, req.params.id);
-    // recieve all info
-    const all_info = {
-      recipe: await recipes_utils.getRecipeReview(req.session.user_id, req.params.id)
+    let tmp_recipe = await DButils.execQuery(`select userId, recipeId from recipes where userId='${user_id}' AND recipeId='${req.params.id}'`);
+    if (tmp_recipe.length == 0)
+    // recipe from spooncoolar
+    {
+      // mark as seen
+      await user_utils.markAsSeen(req.session.user_id, req.params.id);
+      // recieve all info
+      all_info = {
+        recipe: await recipes_utils.getRecipeReview(req.session.user_id, req.params.id)
+      }
+    }
+    else{
+      // recipe from My Recipes
+        const user_id = req.session.user_id;
+        all_info = {
+          recipe: await recipes_utils.getMySpecificRecipe(user_id,req.params.id)
+        }
     }
     res.send(all_info);
   } catch (error){
     next(error);
   }
 });
-/**
- * route for creating recipe
- * seif 9
- */
-router.post("/createRecipe/:name", async (req, res, next) => {
-  try {
-    await recipes_utils.createRecipe(req.session.user_id, req.params.name, req.query);
-    res.status(200).send({ success: true, message: "Recipe Created" });
-  }catch (error){
-    next(error);
-  }
-});
+
 
 
 module.exports = router;
