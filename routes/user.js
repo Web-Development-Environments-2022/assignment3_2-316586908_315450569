@@ -3,6 +3,7 @@ var router = express.Router();
 const DButils = require("./utils/DButils");
 const user_utils = require("./utils/user_utils");
 const recipe_utils = require("./utils/recipes_utils");
+const { removeAllListeners } = require("nodemon");
 
 /**
  * Authenticate all incoming requests by middleware
@@ -70,7 +71,10 @@ router.get('/myRecipes', async (req, res, next) => {
   try {
     const user_id = req.session.user_id;
     let all_my_recipes = await recipe_utils.getMyRecipes(user_id);
-    res.status(200).send(all_my_recipes);
+    let results = {
+      recipes : all_my_recipes
+    }
+    res.status(200).send(results);
   }catch(error){
     next(error);
   }
@@ -97,48 +101,48 @@ router.get('/lastseen', async (req, res, next) => {
   try {
     const user_id = req.session.user_id;
 
-    // let last_3_recipes = await recipe_utils.getMyLastRecipes(user_id);
-    let tmp_arr = [
-      {
-            id: "156124",
-            title: "pizza",
-            readyInMinutes: "45",
-            image: "https://spoonacular.com/recipeImages/641799-556x370.jpg",
-            popularity: "50",
-            vegan: true,
-            vegetarian: true,
-            glutenFree: true,
-            seen: false,
-            favorite: false
-      },
-      {
-        id: "156122",
-        title: "pizza124",
-        readyInMinutes: "60",
-        image: "https://spoonacular.com/recipeImages/641799-556x370.jpg",
-        popularity: "50",
-        vegan: true,
-        vegetarian: true,
-        glutenFree: true,
-        seen: false,
-        favorite: false
-      },
-      {
-        id: "15612",
-            title: "pizza12",
-            readyInMinutes: "45",
-            image: "https://spoonacular.com/recipeImages/641799-556x370.jpg",
-            popularity: "50",
-            vegan: true,
-            vegetarian: true,
-            glutenFree: true,
-            seen: false,
-            favorite: false
-      }
-    ]
+    let last_3_recipes = await recipe_utils.getMyLastRecipes(user_id);
+    // let tmp_arr = [
+    //   {
+    //         id: "156124",
+    //         title: "pizza",
+    //         readyInMinutes: "45",
+    //         image: "https://spoonacular.com/recipeImages/641799-556x370.jpg",
+    //         popularity: "50",
+    //         vegan: true,
+    //         vegetarian: true,
+    //         glutenFree: true,
+    //         seen: false,
+    //         favorite: false
+    //   },
+    //   {
+    //     id: "156122",
+    //     title: "pizza124",
+    //     readyInMinutes: "60",
+    //     image: "https://spoonacular.com/recipeImages/641799-556x370.jpg",
+    //     popularity: "50",
+    //     vegan: true,
+    //     vegetarian: true,
+    //     glutenFree: true,
+    //     seen: false,
+    //     favorite: false
+    //   },
+    //   {
+    //     id: "15612",
+    //         title: "pizza12",
+    //         readyInMinutes: "45",
+    //         image: "https://spoonacular.com/recipeImages/641799-556x370.jpg",
+    //         popularity: "50",
+    //         vegan: true,
+    //         vegetarian: true,
+    //         glutenFree: true,
+    //         seen: false,
+    //         favorite: false
+    //   }
+    // ]
     let results = {
-      // recipes: last_3_recipes
-      recipes: tmp_arr
+      recipes: last_3_recipes
+      // recipes: tmp_arr
     }
     res.status(200).send(results);
   }catch(error){

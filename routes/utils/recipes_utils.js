@@ -173,8 +173,14 @@ async function getMyRecipes(user_id){
     let all_my_recipes = await DButils.execQuery(`select * from recipes where userId = '${user_id}'`);
     let extract_details = all_my_recipes.map((recipe) => {
         let { recipeName, readyInMinutes, image, popularity, vegan, vegetarian, glutenFree } = recipe;
+        if (vegan == "true") vegan=true;
+        else vegan=false;
+        if (vegetarian == "true") vegetarian=true;
+        else vegetarian=false;
+        if (glutenFree == "true") glutenFree=true;
+        else glutenFree=false;
         return {
-            recipeName: recipeName,
+            title: recipeName,
             readyInMinutes: readyInMinutes,
             image: image,
             popularity: popularity,
@@ -198,8 +204,14 @@ async function getMySpecificRecipe(user_id, recipe_id){
         return {};
     let ingredients = await DButils.execQuery(`select ingredientName, amount, units from ingredients where recipeId = '${recipe_id}'`);
     let { recipeName, readyInMinutes, image, popularity, vegan, vegetarian, glutenFree, instructions, servings } = my_recipe[0];
+    if (vegan == "true") vegan=true;
+    else vegan=false;
+    if (vegetarian == "true") vegetarian=true;
+    else vegetarian=false;
+    if (glutenFree == "true") glutenFree=true;
+    else glutenFree=false;
     return {
-        recipeName: recipeName,
+        title: recipeName,
         readyInMinutes: readyInMinutes,
         image: image,
         popularity: popularity,
