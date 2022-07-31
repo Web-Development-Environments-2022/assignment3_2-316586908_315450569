@@ -16,10 +16,11 @@ router.get("/", (req, res) => res.send("im here"));
     let random_3_recipes = await recipes_utils.getRandomThreeRecipes(req.session.user_id);
     // let tmp_arr = [
     //   {
-    //         id: "636768",
+    //         id: "716429",
     //         title: "pizza",
     //         readyInMinutes: "45",
-    //         image: "https://spoonacular.com/recipeImages/641799-556x370.jpg",
+    //         // image: "https://spoonacular.com/recipeImages/641799-556x370.jpg",
+    //         image: null,
     //         popularity: "50",
     //         vegan: true,
     //         vegetarian: true,
@@ -28,7 +29,7 @@ router.get("/", (req, res) => res.send("im here"));
     //         favorite: false
     //   },
     //   {
-    //     id: "636768",
+    //     id: "716429",
     //     title: "pizza124",
     //     readyInMinutes: "60",
     //     image: "https://spoonacular.com/recipeImages/641799-556x370.jpg",
@@ -355,6 +356,7 @@ router.get("/reviewRecipe/:id", async (req, res, next) => {
   // favorite: false
   // }
   //     ]
+  //     res.send(tmp_arr);
   } catch (error){
     next(error);
   }
