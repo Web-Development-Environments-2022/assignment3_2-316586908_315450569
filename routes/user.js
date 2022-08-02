@@ -163,4 +163,17 @@ router.get('/lastseen', async (req, res, next) => {
   }
 });
 
+router.get("/familyRecipes", async (req, res, next) => {
+  try{
+    let family_recipes = await user_utils.getFamilyRecipes(req.session.user_id);
+    const results_final = {
+      recipes: family_recipes
+    };
+    res.status(200).send(results_final);
+  }
+  catch (error){
+    next(error);
+  }
+});
+
 module.exports = router;
