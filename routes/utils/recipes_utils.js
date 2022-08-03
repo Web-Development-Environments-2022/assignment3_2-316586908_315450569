@@ -170,7 +170,7 @@ async function createRecipe(user_id, recipe_name, query_params){
  * @param {*} user_id 
  */
 async function getMyRecipes(user_id){
-    let all_my_recipes = await DButils.execQuery(`select * from recipes where userId = '${user_id}'`);
+    let all_my_recipes = await DButils.execQuery(`select * from recipes where userId = '${user_id}' AND popularity != -1`);
     let extract_details = all_my_recipes.map((recipe) => {
         let { recipeName, recipeId, readyInMinutes, image, popularity, vegan, vegetarian, glutenFree } = recipe;
         if (vegan == "true") vegan=true;

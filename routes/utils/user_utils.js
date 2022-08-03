@@ -16,7 +16,7 @@ async function markAsSeen(user_id, recipe_id){
     await DButils.execQuery(`insert into seenrecipes values ('${user_id}','${recipe_id}')`);
 }
 
-async function getFamilyRecipes(user_id){
+async function getFamilyRecipes(user_id){ // the family recipes are with popularity = -1
     let recipes = await DButils.execQuery(`select * from recipes where userId = '${user_id}' AND popularity = '-1'`);
     recipes = recipes.map(async (recipe) => {
         let { recipeId, recipeName, readyInMinutes, image, popularity, vegan, vegetarian, glutenFree, instructions, servings } = recipe;

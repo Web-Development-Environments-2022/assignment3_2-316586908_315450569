@@ -158,7 +158,7 @@ paths:
     get:
       tags:
       - Users
-      summary: get all the favorite recipes as belogn to the user.
+      summary: get all the favorite recipes as belong to the user.
       description: favorite recipe of specific user.
       responses:
         "200":
@@ -191,7 +191,7 @@ paths:
     get:
       tags:
       - Users
-      summary: get all the created recipes as belogn to the user.
+      summary: get all the created recipes as belong to the user.
       description: created recipe of specific user.
       responses:
         "200":
@@ -203,31 +203,23 @@ paths:
                 items:
                   $ref: '#/components/schemas/PreviewRecipe'
         "400":
-          description: error accured
-  /users/myRecipes/{recipeName}:
+          description: error accured.
+  /users/familyRecipes:
     get:
       tags:
       - Users
-      summary: Get preview data of specifics recipes
-      description: Get from client a list of recipe's ids
-      parameters:
-      - name: recipeName
-        in: path
-        description: The name of the recipe
-        required: true
-        style: simple
-        explode: false
-        schema:
-          type: string
+      summary: get all the family recipes as belong to the user.
       responses:
         "200":
-          description: if there is a match so object Json with Full details of specific recipe from my recipes only, else there is an empty json.
+          description: return a JSON object that contains list of the family recipes
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ViewRecipe'
+                type: array
+                items:
+                  $ref: '#/components/schemas/ViewRecipe'
         "400":
-          description: error accured
+          description: error accured.
   /users/lastseen:
     get:
       tags:
