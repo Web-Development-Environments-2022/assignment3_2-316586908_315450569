@@ -238,6 +238,21 @@ async function getMyLastRecipes(user_id){
     return tmp_arr;
 }
 
+/**
+ * BONUS - seif 13, analyzed instructions
+ * @param {recipe id} recipe_id 
+ */
+async function getAnalyzedInstructions(recipe_id){
+    const analyzedInstructions = await axios.get(`${api_domain}/${recipe_id}/analyzedInstructions`, {
+        params: {
+            apiKey: process.env.spooncular_apiKey,
+            id: recipe_id,
+            stepBreakdown: true
+        }
+    });
+    return analyzedInstructions;
+}
+
 exports.getRandomThreeRecipes = getRandomThreeRecipes;
 exports.searchRecipes= searchRecipes;
 exports.getRecipeReview = getRecipeReview;
@@ -246,3 +261,4 @@ exports.getMyRecipes = getMyRecipes;
 exports.getMySpecificRecipe = getMySpecificRecipe;
 exports.getMyLastRecipes = getMyLastRecipes;
 exports.getPreviews = getPreviews;
+exports.getAnalyzedInstructions = getAnalyzedInstructions;

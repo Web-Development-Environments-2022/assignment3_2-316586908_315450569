@@ -363,5 +363,26 @@ router.get("/reviewRecipe/:id", async (req, res, next) => {
 });
 
 
+/**
+ * BONUS - seif 13
+ * new route for Analyzed Recipe Instructions
+ */
+ router.get("/:id/analyzedInstructions", async (req, res, next) => {
+  try{
+    const user_id = req.session.user_id;
+    const recipe_id = req.params.id;
+    let recipe_review = await recipes_utils.getRecipeReview(user_id, recipe_id);
+    let analyzedInstructions = await recipes_utils.getAnalyzedInstructions(recipe_id);
+    const response = {
+      recipeIngredients : recipe_review.ingredients,
+      analyzedInstructions : analyzedInstructions.data
+    }
+    res.send(response);
+  }
+  catch (error){
+    next(error);
+  } 
+});
+
 
 module.exports = router;
