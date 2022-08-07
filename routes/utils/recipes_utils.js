@@ -158,10 +158,20 @@ async function createRecipe(user_id, recipe_name, query_params){
 
     // size_table = recipeId of the new recipe we created
     let size_table = await DButils.execQuery("SELECT count(*) as count FROM recipes");
-    await DButils.execQuery(`insert into recipes values ('${user_id}' ,'${size_table[0].count}' ,'${recipe_name}', '${readyInMinutes}', '${image}', '${aggregateLikes}', '${vegan}', '${vegetarian}', '${glutenFree}', '${instructions}', '${servings}')`);
+    let recipe_id = size_table[0].count;
+    await DButils.execQuery(`insert into recipes values ('${user_id}' ,'${recipe_id}' ,'${recipe_name}', '${readyInMinutes}', '${image}', '${aggregateLikes}', '${vegan}', '${vegetarian}', '${glutenFree}', 'null', '${servings}')`);
     // ingredients = list : [dict(name : ingredientName_1, amout: amount_1), dict(name: ingredientName_2, amout: amount_2), ...]
     ingredients.map(async (data) => {
-        await DButils.execQuery(`insert into ingredients values ('${size_table[0].count}', '${data.name}', '${data.amount}', '${data.units}')`);
+        await DButils.execQuery(`insert into ingredients values ('${recipe_id}', '${data.name}', '${data.amount}', '${data.units}')`);
+    });
+    instructions.map(async (data) => {
+        data.equipments.map(async (eq) => {
+            await DButils.execQuery(`insert into equipments values ('${recipe_id}', '${data.number}', '${eq.name}', '${eq.tmp.number}', '${eq.tmp.unit}')`);
+        });
+        data.ingredients.map(async (ing) => {
+            await DButils.execQuery(`insert into stepingredients values ('${recipe_id}', '${data.number}', '${ing.name}')`);
+        });
+        await DButils.execQuery(`insert into steps values ('${recipe_id}', '${data.number}', '${data.step}', '${data.length.number}', '${data.length.unit}')`);
     });
 }
 
@@ -204,7 +214,18 @@ async function getMySpecificRecipe(user_id, recipe_id){
     if (my_recipe.length == 0)
         return {};
     let ingredients = await DButils.execQuery(`select ingredientName, amount, units from ingredients where recipeId = '${recipe_id}'`);
-    let { recipeName, readyInMinutes, image, popularity, vegan, vegetarian, glutenFree, instructions, servings } = my_recipe[0];
+
+    let steps_instructions = await DButils.execQuery(`select description from steps where recipeId = '${recipe_id}'`);
+
+    let string_des = '';
+    let sp = "\n" ;
+    steps_instructions.map((data) => {
+        string_des = string_des + sp + data.description;
+    });
+
+    // string_des.replace('|','\\')
+
+    let { recipeName, readyInMinutes, image, popularity, vegan, vegetarian, glutenFree, servings } = my_recipe[0];
     if (vegan == "true") vegan=true;
     else vegan=false;
     if (vegetarian == "true") vegetarian=true;
@@ -221,7 +242,7 @@ async function getMySpecificRecipe(user_id, recipe_id){
         glutenFree: glutenFree,
         seen: true,
         favorite: true,
-        instructions: instructions,
+        instructions: string_des,
         servings: servings,
         ingredients: ingredients
     }
