@@ -164,14 +164,21 @@ async function createRecipe(user_id, recipe_name, query_params){
     ingredients.map(async (data) => {
         await DButils.execQuery(`insert into ingredients values ('${recipe_id}', '${data.name}', '${data.amount}', '${data.units}')`);
     });
+    let i = 0;
     instructions.map(async (data) => {
-        data.equipments.map(async (eq) => {
-            await DButils.execQuery(`insert into equipments values ('${recipe_id}', '${data.number}', '${eq.name}', '${eq.tmp.number}', '${eq.tmp.unit}')`);
+        // let size_table_ai = await DButils.execQuery("SELECT count(*) as count FROM analyzedinstructions");
+        let steps_id = i;
+        i = i + 1;
+        data.steps.map(async (step) => {
+            step.equipments.map(async (eq) => {
+                await DButils.execQuery(`insert into equipments values ('${recipe_id}', '${steps_id}', '${step.number}', '${eq.name}', '${eq.tmp.number}', '${eq.tmp.unit}')`);
+            });
+            step.ingredients.map(async (ing) => {
+                await DButils.execQuery(`insert into stepingredients values ('${recipe_id}', '${step.number}' , '${steps_id}', '${ing.name}')`);
+            });
+            await DButils.execQuery(`insert into steps values ('${recipe_id}', '${steps_id}', '${step.number}', '${step.step}', '${step.length.number}', '${step.length.unit}')`);
         });
-        data.ingredients.map(async (ing) => {
-            await DButils.execQuery(`insert into stepingredients values ('${recipe_id}', '${data.number}', '${ing.name}')`);
-        });
-        await DButils.execQuery(`insert into steps values ('${recipe_id}', '${data.number}', '${data.step}', '${data.length.number}', '${data.length.unit}')`);
+        await DButils.execQuery(`insert into analyzedinstructions values ('${recipe_id}', '${steps_id}', '${data.name}')`);
     });
 }
 
@@ -215,15 +222,70 @@ async function getMySpecificRecipe(user_id, recipe_id){
         return {};
     let ingredients = await DButils.execQuery(`select ingredientName, amount, units from ingredients where recipeId = '${recipe_id}'`);
 
-    let steps_instructions = await DButils.execQuery(`select description from steps where recipeId = '${recipe_id}'`);
+    let steps_wo_eq_ing = await DButils.execQuery(`select * from steps where recipeId = '${recipe_id}'`);
 
-    let string_des = '';
-    let sp = "\n" ;
-    steps_instructions.map((data) => {
-        string_des = string_des + sp + data.description;
+    let equipments = await DButils.execQuery(`select * from equipments where recipeId = '${recipe_id}'`);
+
+    let step_ingredients = await DButils.execQuery(`select * from stepingredients where recipeId = '${recipe_id}'`);
+
+    let ai = await DButils.execQuery(`select * from analyzedinstructions where recipeId = '${recipe_id}'`);
+
+    let analyzedInstructions = [];
+
+    ai.map((ai_params) => {
+        let analyzedInstructions_cell = {
+            name : null,
+            steps : []
+        };
+    
+        
+        let stepsId = ai_params.stepsId;
+        analyzedInstructions_cell.name = ai_params.name;
+        steps_wo_eq_ing.map((data) =>{
+            let steps_cell = {
+                equipment : [],
+                ingredients : [],
+                number: null,
+                step: null,
+                length : {
+                    number: null,
+                    unit: null
+                }
+            };
+            if (data.stepsId == stepsId){
+                steps_cell.number = data.stepNumber;
+                steps_cell.step = data.step;
+                steps_cell.length.number = data.lengthNumber;
+                steps_cell.length.unit = data.lengthUnit;
+                equipments.map((data) =>{
+                    let equipments_cell = {
+                        name: null,
+                        tmp : {
+                            number: null,
+                            unit: null
+                        }
+                    };
+                    if ((data.stepsId == stepsId) && (steps_cell.number == data.stepNumber)){
+                        equipments_cell.name = data.name;
+                        equipments_cell.tmp.number = data.tmpNumber;
+                        equipments_cell.tmp.unit = data.tmpUnit;
+                        steps_cell.equipment.push(equipments_cell);
+                    }
+                });
+                step_ingredients.map((data) =>{
+                    let ingredients_cell = {
+                        name: null
+                    }
+                    if ((data.stepsId == stepsId) && (steps_cell.number == data.stepNumber)){
+                        ingredients_cell.name = data.name;
+                        steps_cell.ingredients.push(ingredients_cell);
+                    }
+                });
+                analyzedInstructions_cell.steps.push(steps_cell);
+            }
+        });
+        analyzedInstructions.push(analyzedInstructions_cell)
     });
-
-    // string_des.replace('|','\\')
 
     let { recipeName, readyInMinutes, image, popularity, vegan, vegetarian, glutenFree, servings } = my_recipe[0];
     if (vegan == "true") vegan=true;
@@ -242,7 +304,7 @@ async function getMySpecificRecipe(user_id, recipe_id){
         glutenFree: glutenFree,
         seen: true,
         favorite: true,
-        instructions: string_des,
+        analyzedInstructions: analyzedInstructions,
         servings: servings,
         ingredients: ingredients
     }

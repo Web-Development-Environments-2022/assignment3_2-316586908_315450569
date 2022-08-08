@@ -213,25 +213,7 @@ router.get("/reviewRecipe/:id", async (req, res, next) => {
   const user_id = req.session.user_id;
   const recipe_id = req.params.id;
   let all_info = '';
-  // let all_info = '';
-  // try {
-  //   let tmp_recipe = await DButils.execQuery(`select userId, recipeId from recipes where userId='${user_id}' AND recipeId='${req.params.id}'`);
-  //   if (tmp_recipe.length == 0)
-  //   // recipe from spooncoolar
-  //   {
-  //     // mark as seen
-  //     await user_utils.markAsSeen(req.session.user_id, req.params.id);
-  //     // recieve all info
-  //     all_info = {
-  //       recipe: await recipes_utils.getRecipeReview(req.session.user_id, req.params.id)
-  //     }
-  //   }
-  //   else{
-  //     // recipe from My Recipes
-  //       all_info = {
-  //         recipe: await recipes_utils.getMySpecificRecipe(user_id,req.params.id)
-  //       }
-  //   }
+
   try{
     all_info = await reviewRecipeHandler(user_id, recipe_id);
   }
@@ -395,22 +377,26 @@ router.get("/reviewRecipe/:id", async (req, res, next) => {
  */
  router.get("/:id/analyzedInstructions", async (req, res, next) => {
   try{
+    let response = {};
     const user_id = req.session.user_id;
     const recipe_id = req.params.id;
     let analyzedInstructions = '';
     let recipe_review = await reviewRecipeHandler(user_id, recipe_id);
     if (recipe_review.flag){ // flag == true => fromspooncular
       analyzedInstructions = await recipes_utils.getAnalyzedInstructions(recipe_id);
+      analyzedInstructions = analyzedInstructions.data;
     }
-    else{
-      analyzedInstructions = recipe_review.recipe.instructions;
+    else
+      analyzedInstructions = recipe_review.recipe.analyzedInstructions;
+    response = {
+      title: recipe_review.recipe.title,
+      image: recipe_review.recipe.image,
+      recipeIngredients : recipe_review.recipe.ingredients,
+      analyzedInstructions : analyzedInstructions,
+      servings: recipe_review.recipe.servings
     }
     // analyzedInstructions = await recipes_utils.getAnalyzedInstructions(recipe_id);
-    const response = {
-      title: recipe_review.recipe.title,
-      recipeIngredients : recipe_review.recipe.ingredients,
-      analyzedInstructions : analyzedInstructions.data
-    }
+    
     res.send(response);
   }
   catch (error){
