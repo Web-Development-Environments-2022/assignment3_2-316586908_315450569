@@ -13,52 +13,52 @@ router.get("/", (req, res) => res.send("im here"));
  */
  router.get("/random", async (req, res, next) => {
   try{
-    // let random_3_recipes = await recipes_utils.getRandomThreeRecipes(req.session.user_id);
-    let tmp_arr = [
-      {
-            id: "716429",
-            title: "pizza",
-            readyInMinutes: "45",
-            // image: "https://spoonacular.com/recipeImages/641799-556x370.jpg",
-            image: null,
-            popularity: "50",
-            vegan: true,
-            vegetarian: true,
-            glutenFree: true,
-            seen: false,
-            favorite: false
-      },
-      {
-        id: "716429",
-        title: "pizza124",
-        readyInMinutes: "60",
-        image: "https://spoonacular.com/recipeImages/641799-556x370.jpg",
-        popularity: "50",
-        vegan: true,
-        vegetarian: true,
-        glutenFree: true,
-        seen: false,
-        favorite: false
-      },
-      {
-        id: "636768",
-            title: "pizza12",
-            readyInMinutes: "45",
-            image: "https://spoonacular.com/recipeImages/641799-556x370.jpg",
-            popularity: "50",
-            vegan: true,
-            vegetarian: true,
-            glutenFree: true,
-            seen: false,
-            favorite: false
-      }
-    ]
-    let results = {
-      recipes: tmp_arr
-    }
+    let random_3_recipes = await recipes_utils.getRandomThreeRecipes(req.session.user_id);
+    // let tmp_arr = [
+    //   {
+    //         id: "716429",
+    //         title: "pizza",
+    //         readyInMinutes: "45",
+    //         // image: "https://spoonacular.com/recipeImages/641799-556x370.jpg",
+    //         image: null,
+    //         popularity: "50",
+    //         vegan: true,
+    //         vegetarian: true,
+    //         glutenFree: true,
+    //         seen: false,
+    //         favorite: false
+    //   },
+    //   {
+    //     id: "716429",
+    //     title: "pizza124",
+    //     readyInMinutes: "60",
+    //     image: "https://spoonacular.com/recipeImages/641799-556x370.jpg",
+    //     popularity: "50",
+    //     vegan: true,
+    //     vegetarian: true,
+    //     glutenFree: true,
+    //     seen: false,
+    //     favorite: false
+    //   },
+    //   {
+    //     id: "636768",
+    //         title: "pizza12",
+    //         readyInMinutes: "45",
+    //         image: "https://spoonacular.com/recipeImages/641799-556x370.jpg",
+    //         popularity: "50",
+    //         vegan: true,
+    //         vegetarian: true,
+    //         glutenFree: true,
+    //         seen: false,
+    //         favorite: false
+    //   }
+    // ]
     // let results = {
-    //   recipes: random_3_recipes
+    //   recipes: tmp_arr
     // }
+    let results = {
+      recipes: random_3_recipes
+    }
    
     res.send(results);
   }
@@ -382,12 +382,13 @@ router.get("/reviewRecipe/:id", async (req, res, next) => {
     const recipe_id = req.params.id;
     let analyzedInstructions = '';
     let recipe_review = await reviewRecipeHandler(user_id, recipe_id);
-    if (recipe_review.flag){ // flag == true => fromspooncular
+    if (recipe_review.flag){ // flag == true => from spooncular
       analyzedInstructions = await recipes_utils.getAnalyzedInstructions(recipe_id);
       analyzedInstructions = analyzedInstructions.data;
     }
     else
       analyzedInstructions = recipe_review.recipe.analyzedInstructions;
+
     response = {
       title: recipe_review.recipe.title,
       image: recipe_review.recipe.image,
