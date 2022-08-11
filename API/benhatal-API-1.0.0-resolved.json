@@ -1,0 +1,667 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Simple Inventory API",
+    "description": "This is a simple API",
+    "contact": {
+      "email": "you@your-company.com"
+    },
+    "license": {
+      "name": "Apache 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+    },
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://virtserver.swaggerhub.com/benhatal/API/1.0.0",
+      "description": "SwaggerHub API Auto Mocking"
+    }
+  ],
+  "tags": [
+    {
+      "name": "admins",
+      "description": "Secured Admin-only calls"
+    },
+    {
+      "name": "developers",
+      "description": "Operations available to regular developers"
+    }
+  ],
+  "paths": {
+    "/register": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "a new user from the client is added to the DB.",
+        "description": "A JSON object contains all the details about the new user.",
+        "requestBody": {
+          "description": "User item to add",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/User"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "user created"
+          },
+          "400": {
+            "description": "bad input parameters"
+          }
+        }
+      }
+    },
+    "/login": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "a user login to the server",
+        "description": "A JSON object contains login details.",
+        "operationId": "login",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/loginBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "cookies returned and JSON object with success message."
+          },
+          "401": {
+            "description": "Username or Password incorrect"
+          }
+        }
+      }
+    },
+    "/logout": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "a user logout from the server.",
+        "description": "session reset.",
+        "responses": {
+          "200": {
+            "description": "session reset, and JSON object with success message."
+          }
+        }
+      }
+    },
+    "/recipes/random": {
+      "get": {
+        "tags": [
+          "Recipes"
+        ],
+        "summary": "Get 3 random recipes",
+        "description": "get three random recipes from external API - spoonacular",
+        "responses": {
+          "200": {
+            "description": "JSON object with array with preview details of three random recipes",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PreviewRecipe"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "error accured."
+          }
+        }
+      }
+    },
+    "/recipes/query/{query}": {
+      "get": {
+        "tags": [
+          "Recipes"
+        ],
+        "summary": "a user want to search a recipe",
+        "description": "query of recipe, searching with the external API.",
+        "parameters": [
+          {
+            "name": "query",
+            "in": "path",
+            "description": "string of query",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "parameters",
+            "in": "cookie",
+            "description": "parameters to do filtering.",
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "$ref": "#/components/schemas/SearchRecipe"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "JSON object with array with preview details of recipes",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PreviewRecipe"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "error accured."
+          }
+        }
+      }
+    },
+    "/recipes/reviewRecipe/{id}": {
+      "get": {
+        "tags": [
+          "Recipes"
+        ],
+        "summary": "a full review on the recipe.",
+        "description": "recieving full review on the recipe with the external API.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "string of recipe id",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "JSON object with array with review details of recipes",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ViewRecipe"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "error accured."
+          }
+        }
+      }
+    },
+    "/user/createRecipe/{name}": {
+      "post": {
+        "tags": [
+          "Recipes"
+        ],
+        "summary": "a user want to creaete new recipe.",
+        "description": "the user fill all the details required to create recipe.",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "description": "string of recipe name",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "parameters",
+            "in": "query",
+            "description": "string of recipe name",
+            "required": true,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "$ref": "#/components/schemas/ViewRecipe"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "message Recipe Created."
+          },
+          "400": {
+            "description": "error accured."
+          }
+        }
+      }
+    },
+    "/users/favorites": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "get all the favorite recipes as belogn to the user.",
+        "description": "favorite recipe of specific user.",
+        "responses": {
+          "200": {
+            "description": "return a list, each object is JSON object as preview details of favorite recipes.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PreviewRecipe"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "error accured."
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Add recipe to a user's favorites table.",
+        "operationId": "favorites",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "string"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "The Recipe successfully saved as favorite."
+          },
+          "400": {
+            "description": "error accured."
+          }
+        }
+      }
+    },
+    "/users/myRecipes": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "get all the created recipes as belogn to the user.",
+        "description": "created recipe of specific user.",
+        "responses": {
+          "200": {
+            "description": "return a list, each object is JSON as preview details of created recipes.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PreviewRecipe"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "error accured"
+          }
+        }
+      }
+    },
+    "/users/lastseen": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "get all the 3 last seen recipes as belogn to the user.",
+        "description": "3 last recipes.",
+        "responses": {
+          "200": {
+            "description": "return a list, each object is JSON as preview details of the recipe.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PreviewRecipe"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "error accured."
+          }
+        }
+      }
+    },
+    "/users/familyRecipes": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "get all the family recipes - preview screen.",
+        "responses": {
+          "200": {
+            "description": "return a list, each object is JSON as preview details of the recipe.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PreviewRecipe"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "error accured."
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "PreviewRecipe": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "id of the recipe",
+            "example": "21"
+          },
+          "title": {
+            "type": "string",
+            "description": "name of the recipe",
+            "example": "pizza"
+          },
+          "image": {
+            "type": "string",
+            "description": "URL for the recipe's image",
+            "format": "URL",
+            "example": "https://GrandmaRecipes.com/pizza-image"
+          },
+          "readyInMinutes": {
+            "type": "string",
+            "description": "The amount of time it takes for the entire preparation process",
+            "example": "3.5"
+          },
+          "popularity": {
+            "type": "string",
+            "description": "amount of likes the recipes recieved",
+            "example": "30"
+          },
+          "vegan": {
+            "type": "boolean",
+            "description": "vegan or not",
+            "example": false
+          },
+          "vegetarian": {
+            "type": "boolean",
+            "description": "vegetarian or not",
+            "example": true
+          },
+          "glutenFree": {
+            "type": "boolean",
+            "description": "Free Gluten Or Not",
+            "example": true
+          },
+          "seen": {
+            "type": "boolean",
+            "description": "Indication if the user has already viewed the recipe",
+            "example": true
+          },
+          "favorite": {
+            "type": "boolean",
+            "description": "Indication if a user Save the recipe to favorites",
+            "example": true
+          }
+        }
+      },
+      "ViewRecipe": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/PreviewRecipe"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "ingredients": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/ViewRecipe_ingredients"
+                }
+              },
+              "instructions": {
+                "type": "string"
+              },
+              "servings": {
+                "type": "integer",
+                "format": "int64"
+              },
+              "analyzedInstructions": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/analyzedInstructions"
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "analyzedInstructions": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/analyzedInstructions_inner"
+        }
+      },
+      "SearchRecipe": {
+        "type": "object",
+        "properties": {
+          "number": {
+            "type": "string",
+            "description": "number of recipes to return",
+            "example": "5"
+          },
+          "cuisine": {
+            "type": "string",
+            "description": "cuisine of recipes to return",
+            "example": "italian"
+          },
+          "diet": {
+            "type": "string",
+            "description": "diet type of recipes to return",
+            "example": "vegetarian"
+          },
+          "intolerance": {
+            "type": "string",
+            "description": "the return recipes must not contain ingredients that are not suitable for people with the intolerances entered.",
+            "example": "gluten"
+          }
+        },
+        "description": "schema for searching recipe"
+      },
+      "User": {
+        "type": "object",
+        "properties": {
+          "username": {
+            "maxLength": 8,
+            "minLength": 3,
+            "type": "string",
+            "description": "username contains between 3 to 8 letters",
+            "example": "sergio12"
+          },
+          "firstname": {
+            "type": "string",
+            "description": "user's first name",
+            "example": "sergio"
+          },
+          "lastname": {
+            "type": "string",
+            "description": "user's last name",
+            "example": "ramos"
+          },
+          "country": {
+            "type": "string",
+            "description": "user's country",
+            "example": "Israel"
+          },
+          "password": {
+            "maxLength": 10,
+            "minLength": 5,
+            "type": "string",
+            "description": "password contains between 5 to 10 chars, at least one of them is a number and a special char",
+            "format": "password",
+            "example": "sergio@124"
+          },
+          "email": {
+            "type": "string",
+            "description": "user's email",
+            "format": "email",
+            "example": "sergio@gmail.com"
+          }
+        },
+        "description": "Model containing user info"
+      },
+      "loginBody": {
+        "type": "object",
+        "properties": {
+          "username": {
+            "maxLength": 8,
+            "minLength": 3,
+            "type": "string",
+            "description": "username contains between 3 to 8 letters",
+            "example": "sergio12"
+          },
+          "password": {
+            "maxLength": 10,
+            "minLength": 5,
+            "type": "string",
+            "description": "password contains between 5 to 10 chars, at least one of them is a number and a special char",
+            "format": "password",
+            "example": "sergio@124"
+          }
+        },
+        "description": "details of user who want to login"
+      },
+      "ViewRecipe_ingredients": {
+        "type": "object",
+        "properties": {
+          "ingredientName": {
+            "type": "string",
+            "description": "name of the ingredient",
+            "example": "cheese"
+          },
+          "amount": {
+            "type": "string",
+            "description": "amount of the ingredient",
+            "example": "300"
+          },
+          "units": {
+            "type": "string",
+            "description": "unit of the ingredient",
+            "example": "gram"
+          }
+        }
+      },
+      "analyzedInstructions_inner": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "name of the component",
+            "example": "cheese"
+          },
+          "steps": {
+            "type": "array",
+            "description": "array of the steps to prepare the component",
+            "items": {
+              "type": "object",
+              "properties": {
+                "equipment": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      },
+                      "tmp": {
+                        "type": "object",
+                        "properties": {
+                          "number": {
+                            "type": "string"
+                          },
+                          "unit": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "ingredients": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      },
+                      "image": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "number": {
+                  "type": "string"
+                },
+                "step": {
+                  "type": "string"
+                },
+                "length": {
+                  "type": "array",
+                  "properties": {
+                    "number": {
+                      "type": "string"
+                    },
+                    "unit": {
+                      "type": "string"
+                    }
+                  },
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -71,7 +71,7 @@ paths:
       description: get three random recipes from external API - spoonacular
       responses:
         "200":
-          description: JSON object with property 'recipes' that contains details of three random recipes
+          description: JSON object with array with preview details of three random recipes
           content:
             application/json:
               schema:
@@ -94,7 +94,7 @@ paths:
         schema:
           type: string
       - name: parameters
-        in: query
+        in: cookie
         description: parameters to do filtering.
         required: false
         style: form
@@ -103,7 +103,11 @@ paths:
           $ref: '#/components/schemas/SearchRecipe'
       responses:
         "200":
-          description: the details of the recipes returned.
+          description: JSON object with array with preview details of recipes
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PreviewRecipe'
         "400":
           description: error accured.
   /recipes/reviewRecipe/{id}:
@@ -123,10 +127,14 @@ paths:
           type: string
       responses:
         "200":
-          description: full details of the recipe returned.
+          description: JSON object with array with review details of recipes
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ViewRecipe'
         "400":
           description: error accured.
-  /users/createRecipe/{name}:
+  /user/createRecipe/{name}:
     post:
       tags:
       - Recipes
@@ -158,7 +166,7 @@ paths:
     get:
       tags:
       - Users
-      summary: get all the favorite recipes as belong to the user.
+      summary: get all the favorite recipes as belogn to the user.
       description: favorite recipe of specific user.
       responses:
         "200":
@@ -191,7 +199,7 @@ paths:
     get:
       tags:
       - Users
-      summary: get all the created recipes as belong to the user.
+      summary: get all the created recipes as belogn to the user.
       description: created recipe of specific user.
       responses:
         "200":
@@ -203,23 +211,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/PreviewRecipe'
         "400":
-          description: error accured.
-  /users/familyRecipes:
-    get:
-      tags:
-      - Users
-      summary: get all the family recipes as belong to the user.
-      responses:
-        "200":
-          description: return a JSON object that contains list of the family recipes
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/ViewRecipe'
-        "400":
-          description: error accured.
+          description: error accured
   /users/lastseen:
     get:
       tags:
@@ -237,12 +229,32 @@ paths:
                   $ref: '#/components/schemas/PreviewRecipe'
         "400":
           description: error accured.
+  /users/familyRecipes:
+    get:
+      tags:
+      - Users
+      summary: get all the family recipes - preview screen.
+      responses:
+        "200":
+          description: return a list, each object is JSON as preview details of the recipe.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PreviewRecipe'
+        "400":
+          description: error accured.
 components:
   schemas:
     PreviewRecipe:
       type: object
       properties:
-        name:
+        id:
+          type: string
+          description: id of the recipe
+          example: "21"
+        title:
           type: string
           description: name of the recipe
           example: pizza
@@ -252,15 +264,13 @@ components:
           format: URL
           example: https://GrandmaRecipes.com/pizza-image
         readyInMinutes:
-          type: number
+          type: string
           description: The amount of time it takes for the entire preparation process
-          format: float
-          example: 3.5
-        aggregateLikes:
-          type: integer
+          example: "3.5"
+        popularity:
+          type: string
           description: amount of likes the recipes recieved
-          format: int64
-          example: 30
+          example: "30"
         vegan:
           type: boolean
           description: vegan or not
@@ -273,11 +283,11 @@ components:
           type: boolean
           description: Free Gluten Or Not
           example: true
-        Watched:
+        seen:
           type: boolean
           description: Indication if the user has already viewed the recipe
           example: true
-        Saved:
+        favorite:
           type: boolean
           description: Indication if a user Save the recipe to favorites
           example: true
@@ -295,6 +305,13 @@ components:
           servings:
             type: integer
             format: int64
+          analyzedInstructions:
+            allOf:
+            - $ref: '#/components/schemas/analyzedInstructions'
+    analyzedInstructions:
+      type: array
+      items:
+        $ref: '#/components/schemas/analyzedInstructions_inner'
     SearchRecipe:
       type: object
       properties:
@@ -314,10 +331,6 @@ components:
           type: string
           description: the return recipes must not contain ingredients that are not suitable for people with the intolerances entered.
           example: gluten
-        sort:
-          type: string
-          description: sort by categories
-          example: ready in minutes
       description: schema for searching recipe
     User:
       type: object
@@ -373,12 +386,64 @@ components:
     ViewRecipe_ingredients:
       type: object
       properties:
-        name:
+        ingredientName:
           type: string
           description: name of the ingredient
           example: cheese
         amount:
           type: string
           description: amount of the ingredient
-          example: "3"
-      example: null
+          example: "300"
+        units:
+          type: string
+          description: unit of the ingredient
+          example: gram
+    analyzedInstructions_inner:
+      type: object
+      properties:
+        name:
+          type: string
+          description: name of the component
+          example: cheese
+        steps:
+          type: array
+          description: array of the steps to prepare the component
+          items:
+            type: object
+            properties:
+              equipment:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                    tmp:
+                      type: object
+                      properties:
+                        number:
+                          type: string
+                        unit:
+                          type: string
+              ingredients:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                    image:
+                      type: string
+              number:
+                type: string
+              step:
+                type: string
+              length:
+                type: array
+                properties:
+                  number:
+                    type: string
+                  unit:
+                    type: string
+                items:
+                  type: object
