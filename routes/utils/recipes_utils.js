@@ -77,7 +77,6 @@ async function searchRecipes(user_id, query_params, query){
         cuisine,
         diet,
         intolerance,
-        sort
     } = query_params;
 
     const response = await axios.get(`${api_domain}/complexSearch`, {
@@ -89,7 +88,6 @@ async function searchRecipes(user_id, query_params, query){
             cuisine: cuisine,
             diet: diet,
             intolerance: intolerance,
-            sort: sort
         }
     });
 
