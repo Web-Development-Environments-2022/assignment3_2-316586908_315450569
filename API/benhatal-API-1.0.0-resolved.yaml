@@ -273,7 +273,6 @@ paths:
                         $ref: '#/components/schemas/PreviewRecipe' 
         '400':
             description : error accured
-
   /users/lastseen:
     get:
       tags:

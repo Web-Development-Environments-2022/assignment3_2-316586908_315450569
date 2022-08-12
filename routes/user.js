@@ -81,19 +81,6 @@ router.get('/myRecipes', async (req, res, next) => {
 });
 
 /**
- * route for specific recipe from My Recipes Page
- */
-//  router.get('/myRecipes/:recipeName', async (req, res, next) => {
-//   try {
-//     const user_id = req.session.user_id;
-//     let all_my_recipes = await recipe_utils.getMySpecificRecipe(user_id,req.params.recipeName);
-//     res.status(200).send(all_my_recipes);
-//   }catch(error){
-//     next(error);
-//   }
-// });
-
-/**
  * seif 6
  * 3 last seen recipes
  */
