@@ -45,7 +45,6 @@ router.post('/favorites', async (req,res,next) => {
 router.get('/favorites', async (req,res,next) => {
   try {
     const user_id = req.session.user_id;
-    let favorite_recipes = {};
     const recipes_id = await user_utils.getFavoriteRecipes(user_id);
     let recipes_id_array = [];
     recipes_id.map((element) => {
@@ -142,6 +141,8 @@ router.get('/lastseen', async (req, res, next) => {
  * seif 9
  */
  router.post("/createRecipe/:name", async (req, res, next) => {
+  if (req.params.name == undefined)
+      res.sendStatus(400).send({ message: "name of recipe is undefined" });
   try {
     await recipe_utils.createRecipe(req.session.user_id, req.params.name, req.body.params);
     res.status(200).send({ success: true, message: "Recipe Created" });

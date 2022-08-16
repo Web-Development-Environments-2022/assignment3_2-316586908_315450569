@@ -140,6 +140,14 @@ paths:
                     description: flag for functionality in server side
         '400':
           description: error accured.
+          content: 
+            application/json: 
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: id is undefined
   /recipes/{id}/analyzedInstructions:
     get:
       tags: 
@@ -181,6 +189,14 @@ paths:
                     type: string
         '400':
           description: error accured.
+          content: 
+            application/json: 
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: id is undefined
   /users/createRecipe/{name}:
     post:
       tags:
@@ -215,6 +231,16 @@ paths:
                     example: Recipe Created
         '400':
           description: error accured.
+          content: 
+            application/json: 
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: name of recipe is undefined
+        '401':
+          description: Unauthorized error
   /users/favorites:
     post:
       tags:
@@ -235,6 +261,8 @@ paths:
           description: The Recipe successfully saved as favorite.
         '400':
           description: error accured.
+        '401':
+          description: Unauthorized error
     get:
       tags:
       - Users
@@ -253,6 +281,8 @@ paths:
                       $ref: '#/components/schemas/PreviewRecipe'
         '400':
           description : error accured.
+        '401':
+          description: Unauthorized error
   /users/myRecipes:
     get:
       tags:
@@ -273,6 +303,8 @@ paths:
                         $ref: '#/components/schemas/PreviewRecipe' 
         '400':
             description : error accured
+        '401':
+          description: Unauthorized error
   /users/lastseen:
     get:
       tags:
@@ -292,7 +324,9 @@ paths:
                     items:  
                       $ref: '#/components/schemas/PreviewRecipe' 
         '400':
-          description : error accured.    
+          description : error accured.
+        '401':
+          description: Unauthorized error
   /users/familyRecipes:
     get:
       tags:
@@ -312,6 +346,8 @@ paths:
                       $ref: '#/components/schemas/ViewRecipe' 
         '400':
           description : error accured.
+        '401':
+          description: Unauthorized error
 components:
   schemas:
     PreviewRecipe:

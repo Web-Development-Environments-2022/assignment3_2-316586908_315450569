@@ -210,6 +210,8 @@ router.get("/", (req, res) => res.send("im here"));
  * seif 7 + mark as seen
  */
 router.get("/reviewRecipe/:id", async (req, res, next) => {
+  if (req.params.id == undefined)
+      res.sendStatus(400).send({ message: "id is undefined" });
   const user_id = req.session.user_id;
   const recipe_id = req.params.id;
   let all_info = '';
@@ -376,10 +378,13 @@ router.get("/reviewRecipe/:id", async (req, res, next) => {
  * new route for Analyzed Recipe Instructions
  */
  router.get("/:id/analyzedInstructions", async (req, res, next) => {
+  if (req.params.id == undefined)
+      res.sendStatus(400).send({ message: "id is undefined" });
   try{
     let response = {};
     const user_id = req.session.user_id;
     const recipe_id = req.params.id;
+    
     let analyzedInstructions = '';
     let recipe_review = await reviewRecipeHandler(user_id, recipe_id);
     if (recipe_review.flag){ // flag == true => from spooncular
