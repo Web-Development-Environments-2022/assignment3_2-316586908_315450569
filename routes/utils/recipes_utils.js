@@ -309,13 +309,14 @@ async function getMySpecificRecipe(user_id, recipe_id){
 }
 
 async function getMyLastRecipes(user_id){
-    let my_last_recipes = await DButils.execQuery(`select recipeId from seenrecipes where userId = '${user_id}'`);
+    let my_last_recipes = await DButils.execQuery(`select recipeId from seenrecipes where userId = '${user_id}' ORDER BY JoinDate ASC`);
     let promises = [];
     my_last_recipes.slice(-3).map((recipeId) => {
         promises.push(getPreviews(user_id, [recipeId.recipeId]));
     });
     let info_res = await Promise.all(promises);
-    let tmp_arr = info_res.map((arr) => {return arr[0]})
+    let tmp_arr = info_res.map((arr) => {return arr[0]});
+    tmp_arr.reverse();
     return tmp_arr;
 }
 

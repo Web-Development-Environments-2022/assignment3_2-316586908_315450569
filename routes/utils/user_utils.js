@@ -13,7 +13,9 @@ async function markAsSeen(user_id, recipe_id){
   
     await DButils.execQuery(`delete from seenrecipes where userId = '${user_id}' AND recipeId = '${recipe_id}'`);
 
-    DButils.execQuery(`insert into seenrecipes values ('${user_id}','${recipe_id}')`);
+    DButils.execQuery(`insert into seenrecipes values ('${user_id}','${recipe_id}', CURRENT_TIMESTAMP())`);
+
+
 }
 
 async function getFamilyRecipes(user_id){ // the family recipes are with popularity = -1

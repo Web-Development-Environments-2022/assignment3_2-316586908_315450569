@@ -83,6 +83,8 @@ paths:
                       $ref: '#/components/schemas/PreviewRecipe'
         '400':
           description: error accured.
+        '500':
+          description: daily points limit of 150 has been reached. from external API.
   /recipes/query/{query}:
     get:
       tags:
@@ -112,6 +114,8 @@ paths:
                   $ref: '#/components/schemas/PreviewRecipe'
         '400':
           description: error accured.
+        '500':
+          description: daily points limit of 150 has been reached. from external API.
   /recipes/reviewRecipe/{id}:
     get:
       tags:
@@ -148,6 +152,8 @@ paths:
                   message:
                     type: string
                     example: id is undefined
+        '500':
+          description: daily points limit of 150 has been reached. from external API.
   /recipes/{id}/analyzedInstructions:
     get:
       tags: 
@@ -197,6 +203,8 @@ paths:
                   message:
                     type: string
                     example: id is undefined
+        '500':
+          description: daily points limit of 150 has been reached. from external API.
   /users/createRecipe/{name}:
     post:
       tags:
